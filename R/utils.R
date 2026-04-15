@@ -2,6 +2,11 @@
 # for bare column names that, per tidyselect, should not have a `.data` prefix
 # where tidyselect expressions are expected
 utils::globalVariables(c("col_id", "col_level_1", "col_level_2"))
+
+# quiet R CMD notes about `.data`
+#' @importFrom rlang .data
+NULL
+
 #' Add NA columns to row tibble
 #'
 #' @param rows_tbl Tibble with group and row_label columns
