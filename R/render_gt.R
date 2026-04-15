@@ -132,5 +132,9 @@ render_gt <- function(
     }
   }
 
+  # replace `NA`s with gt's missing marker: `---`
+  tbl <- tbl |>
+    gt::sub_missing()
+
   tbl
 }
