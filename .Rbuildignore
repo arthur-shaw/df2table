@@ -1,0 +1,9 @@
+^df2table\.Rproj$
+^\.Rproj\.user$
+dev/*
+^\.github$
+^tests$
+^\.gitignore$
+^\.RStudio\.old$
+^\.Rhistory$
+

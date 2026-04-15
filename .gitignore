@@ -1,0 +1,4 @@
+.Rproj.user
+
+# do not track dev folder's contents
+dev/*

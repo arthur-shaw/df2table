@@ -1,0 +1,26 @@
+Package: df2table
+Title: Generate Survey Table Shells from Labelled Data
+Version: 0.0.0.9000
+Authors@R: 
+    person(given = "Arthur",
+           family = "Shaw",
+           role = c("aut", "cre"),
+           email = "jashaw2002@gmail.com")
+Description: Programmatically generate table shells for survey-style tabulations 
+    using labelled data. Separates table structure from data computation, 
+    supporting hierarchical row groupings and flexible column definitions 
+    with integration to 'gt' and 'flextable' rendering engines.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
+Imports:
+    dplyr,
+    tidyr,
+    tibble,
+    labelled,
+    gt,
+    flextable,
+    rlang
+Suggests:
+    testthat (>= 3.0.0)
