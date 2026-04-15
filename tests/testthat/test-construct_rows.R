@@ -1,5 +1,5 @@
 test_that("construct_rows creates single row for NULL", {
-  source("fixtures.R", local = TRUE)
+  source(testthat::test_path("fixtures.R"), local = TRUE)
   data <- create_test_data()
 
   by_list <- list("National" = NULL)
@@ -11,7 +11,7 @@ test_that("construct_rows creates single row for NULL", {
 })
 
 test_that("construct_rows creates multiple rows from value labels", {
-  source("fixtures.R", local = TRUE)
+  source(testthat::test_path("fixtures.R"), local = TRUE)
   data <- create_test_data()
 
   by_list <- list("Zone" = "admin1")
@@ -23,7 +23,7 @@ test_that("construct_rows creates multiple rows from value labels", {
 })
 
 test_that("construct_rows combines multiple blocks correctly", {
-  source("fixtures.R", local = TRUE)
+  source(testthat::test_path("fixtures.R"), local = TRUE)
   data <- create_test_data()
 
   by_list <- list(

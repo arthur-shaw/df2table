@@ -6,7 +6,7 @@ test_that("validate_inputs rejects non-data-frame data", {
 })
 
 test_that("validate_inputs rejects unnamed by_list", {
-  source("fixtures.R", local = TRUE)
+  source(testthat::test_path("fixtures.R"), local = TRUE)
   data <- create_test_data()
 
   expect_error(
@@ -16,7 +16,7 @@ test_that("validate_inputs rejects unnamed by_list", {
 })
 
 test_that("validate_inputs rejects vector elements in by_list", {
-  source("fixtures.R", local = TRUE)
+  source(testthat::test_path("fixtures.R"), local = TRUE)
   data <- create_test_data()
 
   by_list <- list("Region" = c("admin1", "urb_rur"))
@@ -28,7 +28,7 @@ test_that("validate_inputs rejects vector elements in by_list", {
 })
 
 test_that("validate_inputs rejects missing variables in by_list", {
-  source("fixtures.R", local = TRUE)
+  source(testthat::test_path("fixtures.R"), local = TRUE)
   data <- create_test_data()
 
   by_list <- list("Region" = "nonexistent_var")
@@ -40,7 +40,7 @@ test_that("validate_inputs rejects missing variables in by_list", {
 })
 
 test_that("validate_inputs rejects categorical column without labels", {
-  source("fixtures.R", local = TRUE)
+  source(testthat::test_path("fixtures.R"), local = TRUE)
   data <- create_test_data()
   # Create data with unlabelled variable
   data$unlabelled_var <- c(1, 2, 3, 1, 2, 3)
@@ -56,7 +56,7 @@ test_that("validate_inputs rejects categorical column without labels", {
 })
 
 test_that("validate_inputs rejects numeric column without label", {
-  source("fixtures.R", local = TRUE)
+  source(testthat::test_path("fixtures.R"), local = TRUE)
   data <- create_test_data()
 
   col_spec <- list(
@@ -70,7 +70,7 @@ test_that("validate_inputs rejects numeric column without label", {
 })
 
 test_that("validate_inputs accepts valid inputs", {
-  source("fixtures.R", local = TRUE)
+  source(testthat::test_path("fixtures.R"), local = TRUE)
   data <- create_test_data()
 
   by_list <- list(

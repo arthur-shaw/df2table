@@ -1,5 +1,5 @@
 test_that("construct_columns handles categorical columns", {
-  source("fixtures.R", local = TRUE)
+  source(testthat::test_path("fixtures.R"), local = TRUE)
   data <- create_test_data()
 
   col_spec <- list(
@@ -14,7 +14,7 @@ test_that("construct_columns handles categorical columns", {
 })
 
 test_that("construct_columns handles numeric columns", {
-  source("fixtures.R", local = TRUE)
+  source(testthat::test_path("fixtures.R"), local = TRUE)
   data <- create_test_data()
 
   col_spec <- list(
@@ -29,7 +29,7 @@ test_that("construct_columns handles numeric columns", {
 })
 
 test_that("construct_columns combines multiple blocks", {
-  source("fixtures.R", local = TRUE)
+  source(testthat::test_path("fixtures.R"), local = TRUE)
   data <- create_test_data()
 
   col_spec <- list(

@@ -1,5 +1,5 @@
 test_that("make_table_shell produces correct gt structure", {
-  source("fixtures.R", local = TRUE)
+  source(testthat::test_path("fixtures.R"), local = TRUE)
   data <- create_test_data()
 
   by_list <- list(
@@ -21,7 +21,7 @@ test_that("make_table_shell produces correct gt structure", {
 })
 
 test_that("make_table_shell produces correct flextable structure", {
-  source("fixtures.R", local = TRUE)
+  source(testthat::test_path("fixtures.R"), local = TRUE)
   data <- create_test_data()
 
   by_list <- list(
@@ -43,7 +43,7 @@ test_that("make_table_shell produces correct flextable structure", {
 })
 
 test_that("make_table_shell with mixed column types", {
-  source("fixtures.R", local = TRUE)
+  source(testthat::test_path("fixtures.R"), local = TRUE)
   data <- create_test_data()
 
   by_list <- list("National" = NULL)
@@ -63,7 +63,7 @@ test_that("make_table_shell with mixed column types", {
 })
 
 test_that("make_table_shell includes title when provided", {
-  source("fixtures.R", local = TRUE)
+  source(testthat::test_path("fixtures.R"), local = TRUE)
   data <- create_test_data()
 
   by_list <- list("National" = NULL)
@@ -83,7 +83,7 @@ test_that("make_table_shell includes title when provided", {
 })
 
 test_that("make_table_shell with show_group_labels = FALSE", {
-  source("fixtures.R", local = TRUE)
+  source(testthat::test_path("fixtures.R"), local = TRUE)
   data <- create_test_data()
 
   by_list <- list(
@@ -106,7 +106,7 @@ test_that("make_table_shell with show_group_labels = FALSE", {
 })
 
 test_that("make_table_shell with hide_first_group = TRUE", {
-  source("fixtures.R", local = TRUE)
+  source(testthat::test_path("fixtures.R"), local = TRUE)
   data <- create_test_data()
 
   by_list <- list(
