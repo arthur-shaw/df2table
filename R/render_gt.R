@@ -42,22 +42,56 @@ render_gt <- function(
   for (block_name in blocks) {
     col_ids <- get_col_ids_for_block(col_metadata, block_name)
 
-    # Add spanner for this block
-    tbl <- gt::tab_spanner(
-      tbl,
-      label = block_name,
-      columns = dplyr::all_of(col_ids)
-    )
+    if (has_col_level_2(col_metadata, block_name)) {
+      # Block has subgroups (col_level_2) - add nested spanners
+      # First, add inner spanners for each col_level_1
+      level_1_values <- get_unique_level_1_for_block(col_metadata, block_name)
 
-    # Set individual column labels (for categorical: value labels)
-    labels_list <- get_col_labels(col_metadata, col_ids)
+      for (level_1_label in level_1_values) {
+        level_1_col_ids <- get_col_ids_for_level_1(col_metadata, block_name, level_1_label)
+        tbl <- gt::tab_spanner(
+          tbl,
+          label = level_1_label,
+          columns = dplyr::all_of(level_1_col_ids)
+        )
+      }
 
-    # Only set non-NA labels
-    non_na_labels <- labels_list[!is.na(labels_list)]
-    if (length(non_na_labels) > 0) {
-      # non_na_labels is already a named vector: names = col_id, values = display_label
-      # This is exactly what cols_label(.list = ...) expects
-      tbl <- gt::cols_label(tbl, .list = non_na_labels)
+      # Then add outer spanner for the block
+      tbl <- gt::tab_spanner(
+        tbl,
+        label = block_name,
+        columns = dplyr::all_of(col_ids)
+      )
+
+      # Set column labels from col_level_2
+      labels_list <- col_metadata |>
+        dplyr::filter(.data$col_id %in% col_ids) |>
+        dplyr::select(col_id, col_level_2) |>
+        tibble::deframe()
+
+      non_na_labels <- labels_list[!is.na(labels_list)]
+      if (length(non_na_labels) > 0) {
+        tbl <- gt::cols_label(tbl, .list = non_na_labels)
+      }
+    } else {
+      # Block without subgroups - original behavior
+      # Add spanner for this block
+      tbl <- gt::tab_spanner(
+        tbl,
+        label = block_name,
+        columns = dplyr::all_of(col_ids)
+      )
+
+      # Set individual column labels (for categorical: value labels)
+      labels_list <- get_col_labels(col_metadata, col_ids)
+
+      # Only set non-NA labels
+      non_na_labels <- labels_list[!is.na(labels_list)]
+      if (length(non_na_labels) > 0) {
+        # non_na_labels is already a named vector: names = col_id, values = display_label
+        # This is exactly what cols_label(.list = ...) expects
+        tbl <- gt::cols_label(tbl, .list = non_na_labels)
+      }
     }
   }
 

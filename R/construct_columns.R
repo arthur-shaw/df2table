@@ -8,6 +8,7 @@
 #' @importFrom labelled val_labels var_label
 #' @importFrom tibble tibble
 #' @importFrom dplyr bind_rows
+#' @importFrom tidyr expand_grid
 #' @importFrom rlang warn
 #'
 #' @keywords internal
@@ -16,6 +17,17 @@ construct_columns <- function(data, col_spec) {
     spec <- col_spec[[i]]
     var_name <- spec$var
 
+    # Extract subgroup labels if 'by' is specified
+    subgroup_labels <- NULL
+    if (!is.null(spec$by)) {
+      subgroup_labels <- names(labelled::val_labels(data[[spec$by]]))
+      # Add total label if include_total is TRUE
+      if (!is.null(spec$include_total) && spec$include_total) {
+        total_lbl <- if (!is.null(spec$total_label)) spec$total_label else "All"
+        subgroup_labels <- c(subgroup_labels, total_lbl)
+      }
+    }
+
     if (spec$type == "categorical") {
       col_block <- labelled::var_label(data[[var_name]])
       if (is.null(col_block)) col_block <- var_name
@@ -23,39 +35,110 @@ construct_columns <- function(data, col_spec) {
       labels <- labelled::val_labels(data[[var_name]])
       label_names <- names(labels)
 
-      col_ids <- make_valid_names(label_names)
+      if (!is.null(subgroup_labels)) {
+        # Expand categorical with by: grid of categories × subgroups
+        expanded <- tidyr::expand_grid(
+          col_level_1_raw = label_names,
+          col_level_2_raw = subgroup_labels
+        )
 
-      # Check for duplicates and add suffixes if needed
-      duplicates <- duplicated(col_ids)
-      if (any(duplicates)) {
-        for (j in which(duplicates)) {
-          suffix <- 1
-          new_id <- paste0(col_ids[j], "_", suffix)
-          while (new_id %in% col_ids) {
-            suffix <- suffix + 1
+        col_level_1 <- expanded$col_level_1_raw
+        col_level_2 <- expanded$col_level_2_raw
+
+        col_ids <- paste(
+          make_valid_names(col_level_1),
+          make_valid_names(col_level_2),
+          sep = "__"
+        )
+
+        # Check for duplicates within this block and add suffixes if needed
+        duplicates <- duplicated(col_ids)
+        if (any(duplicates)) {
+          for (j in which(duplicates)) {
+            suffix <- 1
             new_id <- paste0(col_ids[j], "_", suffix)
+            while (new_id %in% col_ids) {
+              suffix <- suffix + 1
+              new_id <- paste0(col_ids[j], "_", suffix)
+            }
+            col_ids[j] <- new_id
           }
-          col_ids[j] <- new_id
         }
-      }
 
-      tibble::tibble(
-        col_block = col_block,
-        col_level_1 = label_names,
-        col_level_2 = NA_character_,
-        col_id = col_ids
-      )
+        tibble::tibble(
+          col_block = col_block,
+          col_level_1 = col_level_1,
+          col_level_2 = col_level_2,
+          col_id = col_ids
+        )
+      } else {
+        # Categorical without by: original behavior
+        col_ids <- make_valid_names(label_names)
+
+        # Check for duplicates and add suffixes if needed
+        duplicates <- duplicated(col_ids)
+        if (any(duplicates)) {
+          for (j in which(duplicates)) {
+            suffix <- 1
+            new_id <- paste0(col_ids[j], "_", suffix)
+            while (new_id %in% col_ids) {
+              suffix <- suffix + 1
+              new_id <- paste0(col_ids[j], "_", suffix)
+            }
+            col_ids[j] <- new_id
+          }
+        }
+
+        tibble::tibble(
+          col_block = col_block,
+          col_level_1 = label_names,
+          col_level_2 = NA_character_,
+          col_id = col_ids
+        )
+      }
     } else {
       # Numeric column
       col_block <- spec$label
-      col_id <- make_valid_names(col_block)[1]
 
-      tibble::tibble(
-        col_block = col_block,
-        col_level_1 = NA_character_,
-        col_level_2 = NA_character_,
-        col_id = col_id
-      )
+      if (!is.null(subgroup_labels)) {
+        # Numeric with by: one row per subgroup
+        col_ids <- paste(
+          make_valid_names(col_block)[1],
+          make_valid_names(subgroup_labels),
+          sep = "__"
+        )
+
+        # Check for duplicates and add suffixes if needed
+        duplicates <- duplicated(col_ids)
+        if (any(duplicates)) {
+          for (j in which(duplicates)) {
+            suffix <- 1
+            new_id <- paste0(col_ids[j], "_", suffix)
+            while (new_id %in% col_ids) {
+              suffix <- suffix + 1
+              new_id <- paste0(col_ids[j], "_", suffix)
+            }
+            col_ids[j] <- new_id
+          }
+        }
+
+        tibble::tibble(
+          col_block = col_block,
+          col_level_1 = subgroup_labels,
+          col_level_2 = NA_character_,
+          col_id = col_ids
+        )
+      } else {
+        # Numeric without by: original behavior
+        col_id <- make_valid_names(col_block)[1]
+
+        tibble::tibble(
+          col_block = col_block,
+          col_level_1 = NA_character_,
+          col_level_2 = NA_character_,
+          col_id = col_id
+        )
+      }
     }
   })
 

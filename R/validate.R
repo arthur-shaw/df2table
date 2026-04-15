@@ -99,6 +99,36 @@ validate_inputs <- function(data, by_list, col_spec) {
       )
     }
 
+    # Validate 'by' field if specified
+    if (!is.null(spec$by)) {
+      if (!is.character(spec$by) || length(spec$by) != 1) {
+        rlang::abort(
+          paste0(
+            "Column spec element ", i, ": 'by' field must be a single character string (variable name)."
+          )
+        )
+      }
+
+      if (!(spec$by %in% names(data))) {
+        rlang::abort(
+          paste0(
+            "Column spec element ", i, ": variable '", spec$by,
+            "' specified in 'by' field not found in data."
+          )
+        )
+      }
+
+      by_labels <- labelled::val_labels(data[[spec$by]])
+      if (is.null(by_labels) || length(by_labels) == 0) {
+        rlang::abort(
+          paste0(
+            "Column spec element ", i, ": variable '", spec$by,
+            "' in 'by' field has no value labels. The 'by' variable must be labelled."
+          )
+        )
+      }
+    }
+
     if (spec$type == "categorical") {
       labels <- labelled::val_labels(data[[spec$var]])
       if (is.null(labels) || length(labels) == 0) {
@@ -116,6 +146,27 @@ validate_inputs <- function(data, by_list, col_spec) {
         rlang::abort(
           paste0(
             "Column spec element ", i, ": numeric column block requires 'label' argument."
+          )
+        )
+      }
+    }
+    # Validate total_label field if specified
+    if (!is.null(spec$total_label)) {
+      # Check that total_label is a single non-empty character string
+      if (!is.character(spec$total_label) || length(spec$total_label) != 1 || nchar(spec$total_label) == 0) {
+        rlang::abort(
+          paste0(
+            "Column spec element ", i, ": 'total_label' must be a single non-empty character string."
+          )
+        )
+      }
+
+      # Warn if total_label is provided without include_total = TRUE
+      if (is.null(spec$include_total) || !spec$include_total) {
+        rlang::warn(
+          paste0(
+            "Column spec element ", i, ": 'total_label' provided but 'include_total' is not TRUE. ",
+            "The label will be ignored."
           )
         )
       }

@@ -9,7 +9,7 @@ add_na_columns(rows_tbl, col_metadata)
 \arguments{
 \item{rows_tbl}{Tibble with group and row_label columns}
 
-\item{col_metadata}{Tibble with col_id column}
+\item{col_metadata}{tibble with col_id column}
 }
 \value{
 Tibble with rows, row labels, and NA columns for each col_id

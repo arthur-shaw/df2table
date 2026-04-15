@@ -84,3 +84,78 @@ test_that("validate_inputs accepts valid inputs", {
 
   expect_silent(validate_inputs(data, by_list, col_spec))
 })
+
+test_that("validate_inputs rejects by variable not in data", {
+  source(testthat::test_path("fixtures.R"), local = TRUE)
+  data <- create_test_data()
+
+  col_spec <- list(
+    list(type = "categorical", var = "cookstove", by = "nonexistent_var")
+  )
+
+  expect_error(
+    validate_inputs(data, list("National" = NULL), col_spec),
+    "not found in data"
+  )
+})
+
+test_that("validate_inputs rejects by variable without labels", {
+  source(testthat::test_path("fixtures.R"), local = TRUE)
+  data <- create_test_data()
+  # Create data with unlabelled variable
+  data$unlabelled_by <- c(1, 2, 1, 2, 1, 2)
+
+  col_spec <- list(
+    list(type = "categorical", var = "cookstove", by = "unlabelled_by")
+  )
+
+  expect_error(
+    validate_inputs(data, list("National" = NULL), col_spec),
+    "no value labels"
+  )
+})
+
+test_that("validate_inputs accepts column spec with valid by", {
+  source(testthat::test_path("fixtures.R"), local = TRUE)
+  data <- create_test_data()
+
+  col_spec <- list(
+    list(type = "categorical", var = "cookstove", by = "sex"),
+    list(type = "numeric", var = "expenditure", label = "Mean", by = "sex", include_total = TRUE)
+  )
+
+  expect_silent(validate_inputs(data, list("National" = NULL), col_spec))
+})
+
+test_that("validate_inputs rejects empty total_label", {
+  source(testthat::test_path("fixtures.R"), local = TRUE)
+  data <- create_test_data()
+
+  col_spec <- list(
+    list(type = "numeric", var = "expenditure", label = "Mean", by = "sex", include_total = TRUE, total_label = "")
+  )
+
+  expect_error(validate_inputs(data, list("National" = NULL), col_spec))
+})
+
+test_that("validate_inputs rejects total_label with length > 1", {
+  source(testthat::test_path("fixtures.R"), local = TRUE)
+  data <- create_test_data()
+
+  col_spec <- list(
+    list(type = "numeric", var = "expenditure", label = "Mean", by = "sex", include_total = TRUE, total_label = c("All", "Total"))
+  )
+
+  expect_error(validate_inputs(data, list("National" = NULL), col_spec))
+})
+
+test_that("validate_inputs warns when total_label provided without include_total = TRUE", {
+  source(testthat::test_path("fixtures.R"), local = TRUE)
+  data <- create_test_data()
+
+  col_spec <- list(
+    list(type = "numeric", var = "expenditure", label = "Mean", by = "sex", total_label = "Overall")
+  )
+
+  expect_warning(validate_inputs(data, list("National" = NULL), col_spec))
+})

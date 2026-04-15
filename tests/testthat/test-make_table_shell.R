@@ -127,3 +127,80 @@ test_that("make_table_shell with hide_first_group = TRUE", {
 
   expect_s3_class(result, "gt_tbl")
 })
+
+test_that("make_table_shell with numeric column and by", {
+  source(testthat::test_path("fixtures.R"), local = TRUE)
+  data <- create_test_data()
+
+  by_list <- list("National" = NULL)
+  col_spec <- list(
+    list(type = "numeric", var = "expenditure", label = "Mean expenditure", by = "sex")
+  )
+
+  result <- make_table_shell(
+    data = data,
+    by_list = by_list,
+    col_spec = col_spec,
+    engine = "gt"
+  )
+
+  expect_s3_class(result, "gt_tbl")
+})
+
+test_that("make_table_shell with categorical column and by", {
+  source(testthat::test_path("fixtures.R"), local = TRUE)
+  data <- create_test_data()
+
+  by_list <- list("National" = NULL)
+  col_spec <- list(
+    list(type = "categorical", var = "cookstove", by = "sex")
+  )
+
+  result <- make_table_shell(
+    data = data,
+    by_list = by_list,
+    col_spec = col_spec,
+    engine = "gt"
+  )
+
+  expect_s3_class(result, "gt_tbl")
+})
+
+test_that("make_table_shell with column by and include_total", {
+  source(testthat::test_path("fixtures.R"), local = TRUE)
+  data <- create_test_data()
+
+  by_list <- list("National" = NULL)
+  col_spec <- list(
+    list(type = "numeric", var = "expenditure", label = "Mean expenditure", by = "sex", include_total = TRUE)
+  )
+
+  result <- make_table_shell(
+    data = data,
+    by_list = by_list,
+    col_spec = col_spec,
+    engine = "gt"
+  )
+
+  expect_s3_class(result, "gt_tbl")
+})
+
+test_that("make_table_shell with mixed by and non-by columns", {
+  source(testthat::test_path("fixtures.R"), local = TRUE)
+  data <- create_test_data()
+
+  by_list <- list("National" = NULL)
+  col_spec <- list(
+    list(type = "categorical", var = "cookstove"),
+    list(type = "numeric", var = "expenditure", label = "Mean expenditure", by = "sex", include_total = TRUE)
+  )
+
+  result <- make_table_shell(
+    data = data,
+    by_list = by_list,
+    col_spec = col_spec,
+    engine = "gt"
+  )
+
+  expect_s3_class(result, "gt_tbl")
+})

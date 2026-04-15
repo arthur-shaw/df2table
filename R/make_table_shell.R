@@ -14,6 +14,9 @@
 #'   - `type`: `"categorical"` or `"numeric"`
 #'   - `var`: variable name in data
 #'   - `label`: (numeric only) display label for the column
+#'   - `by`: (optional) variable name for column subgroups; must be labelled
+#'   - `include_total`: (optional) logical; if `TRUE`, adds a total column
+#'   - `total_label`: (optional) text for total column (default: `"All"`); only used if `include_total = TRUE`
 #' @param title Optional character string for table title.
 #' @param engine `"gt"` or `"flextable"` (default: `gt`). Controls output table class.
 #' @param show_group_labels Logical (default `FALSE`). Show group header rows.

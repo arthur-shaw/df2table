@@ -1,7 +1,7 @@
 #' Add NA columns to row tibble
 #'
 #' @param rows_tbl Tibble with group and row_label columns
-#' @param col_metadata Tibble with col_id column
+#' @param col_metadata tibble with col_id column
 #'
 #' @return Tibble with rows, row labels, and NA columns for each col_id
 #'
@@ -102,8 +102,64 @@ get_col_ids_for_block <- function(col_metadata, block_name) {
 get_col_labels <- function(col_metadata, col_ids) {
   labels <- col_metadata |>
     dplyr::filter(.data$col_id %in% col_ids) |>
-    dplyr::select(.data$col_id, .data$col_level_1) |>
+    dplyr::select(col_id, col_level_1) |>
     tibble::deframe()
 
   labels
+}
+
+#' Check if a block has subgroups (col_level_2)
+#'
+#' @param col_metadata Tibble with column metadata
+#' @param block_name Character string for block name
+#'
+#' @return Logical; TRUE if the block has any non-NA col_level_2 values
+#'
+#' @importFrom dplyr filter
+#'
+#' @keywords internal
+has_col_level_2 <- function(col_metadata, block_name) {
+  block_rows <- col_metadata |>
+    dplyr::filter(.data$col_block == block_name)
+  any(!is.na(block_rows$col_level_2))
+}
+
+#' Get column IDs for a specific col_level_1 within a block
+#'
+#' @param col_metadata Tibble with column metadata
+#' @param block_name Character string for block name
+#' @param level_1_label Character string for col_level_1 value
+#'
+#' @return Character vector of col_ids
+#'
+#' @importFrom dplyr filter pull
+#'
+#' @keywords internal
+get_col_ids_for_level_1 <- function(col_metadata, block_name, level_1_label) {
+  col_metadata |>
+    dplyr::filter(
+      .data$col_block == block_name,
+      .data$col_level_1 == level_1_label
+    ) |>
+    dplyr::pull(.data$col_id)
+}
+
+#' Get unique col_level_1 values for a block
+#'
+#' @param col_metadata Tibble with column metadata
+#' @param block_name Character string for block name
+#'
+#' @return Character vector of unique non-NA col_level_1 values in order of appearance
+#'
+#' @importFrom dplyr filter pull
+#'
+#' @keywords internal
+get_unique_level_1_for_block <- function(col_metadata, block_name) {
+  col_metadata |>
+    dplyr::filter(
+      .data$col_block == block_name,
+      !is.na(.data$col_level_1)
+    ) |>
+    dplyr::pull(.data$col_level_1) |>
+    unique()
 }

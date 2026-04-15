@@ -32,6 +32,9 @@ Only metadata (variable labels and value labels) is used.}
 \item \code{type}: \code{"categorical"} or \code{"numeric"}
 \item \code{var}: variable name in data
 \item \code{label}: (numeric only) display label for the column
+\item \code{by}: (optional) variable name for column subgroups; must be labelled
+\item \code{include_total}: (optional) logical; if \code{TRUE}, adds a total column
+\item \code{total_label}: (optional) text for total column (default: \code{"All"}); only used if \code{include_total = TRUE}
 }}
 
 \item{title}{Optional character string for table title.}

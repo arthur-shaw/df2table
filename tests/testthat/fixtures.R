@@ -23,6 +23,10 @@ create_test_data <- function() {
     expenditure = labelled(
       c(100, 150, 200, 120, 180, 220),
       NULL
+    ),
+    sex = labelled(
+      c(1, 2, 1, 2, 1, 2),
+      c(Male = 1, Female = 2)
     )
   )
 
@@ -30,6 +34,7 @@ create_test_data <- function() {
   labelled::var_label(data$urb_rur) <- "Settlement"
   labelled::var_label(data$cookstove) <- "Stove type"
   labelled::var_label(data$expenditure) <- "Expenditure (USD)"
+  labelled::var_label(data$sex) <- "Sex"
 
   data
 }
